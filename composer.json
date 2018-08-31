@@ -1,0 +1,39 @@
+{
+	"name" : "smartsolutionsitaly/cakephp-locale-selector-middleware",
+	"description" : "Locale Selector Middleware for CakePHP",
+	"keywords" : [
+		"cakephp",
+		"middleware",
+		"locale"
+	],
+	"type" : "cakephp-plugin",
+	"license" : "MIT",
+	"require-dev" : {
+		"cakephp/cakephp" : "^3.6"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"SmartSolutionsItaly\\CakePHP\\" : "src"
+		}
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"SmartSolutionsItaly\\CakePHP\\I18n\\Middleware\\Test\\" : "tests",
+			"Cake\\Test\\" : "./vendor/cakephp/cakephp/tests"
+		}
+	},
+	"homepage" : "https://github.com/smartsolutionsitaly/cakephp-locale-selector-middleware",
+	"authors" : [{
+			"name" : "Lucio Benini",
+			"email" : "dev@smartsolutions.it",
+			"homepage" : "https://smartsolutions.it",
+			"role" : "Web Developer"
+		}
+	],
+	"support" : {
+		"email" : "info@smartsolutions.it",
+		"issues" : "https://github.com/smartsolutionsitaly/cakephp-locale-selector-middleware/issues",
+		"wiki" : "https://github.com/smartsolutionsitaly/cakephp-locale-selector-middleware/wiki",
+		"source" : "https://github.com/smartsolutionsitaly/cakephp-locale-selector-middleware"
+	}
+}
