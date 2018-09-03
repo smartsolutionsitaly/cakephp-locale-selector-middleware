@@ -35,11 +35,19 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class LocaleSelectorMiddleware
 {
+    protected $_locales = [];
+
     /**
      * LocaleSelectorMiddleware constructor.
+     *
+     * @param array|null $locales The allowed locales.
+     * @since 1.0.1
      */
-    public function __construct()
+    public function __construct(array $locales = null)
     {
+        if ($locales === null) {
+            $this->_locales = Configure::read('App.locales');
+        }
     }
 
     /**
@@ -47,9 +55,11 @@ class LocaleSelectorMiddleware
      * @param ResponseInterface $response The response.
      * @param callable $next The next middleware to call.
      * @return ResponseInterface A response.
+     * @since 1.0.0
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
+        $session = $request->getSession();
         $value = $request->getParam('locale', false);
 
         if (!$value) {
@@ -60,19 +70,17 @@ class LocaleSelectorMiddleware
             $value = $request->getData('locale', false);
         }
 
-        if (!$value) {
+        if (!$value && !$session->check('Config.language')) {
             $value = Locale::acceptFromHttp($request->getHeaderLine('Accept-Language'));
         }
 
-        $session = $request->getSession();
-
-        if ($value && ($locale = static::setLocale($value))) {
+        if ($locale = $this->setLocale($value)) {
             $session->write('Config.language', $locale);
             return $next($request, $response);
         }
 
         if ($session->read('Config.language') != Configure::read('App.locale')) {
-            i18n::setLocale($session->read('Config.language'));
+            static::processLocale((string)$session->read('Config.language'));
         }
 
         return $next($request, $response);
@@ -82,32 +90,53 @@ class LocaleSelectorMiddleware
      * Sets the locale from the given value if matches the configured locales.
      *
      * @param string $value The locale string.
-     * @return string|NULL "true" if the given locale has been found, otherwise "false".
+     * @return string|NULL If the given locale has been found returns it, otherwise NULL.
+     * @since 1.0.0
      */
-    protected static function setLocale($value)
+    protected function setLocale($value)
     {
         if ($value) {
-            if (Configure::read('App.locales') === ['*']) {
-                I18n::setLocale($value);
-                Configure::write('App.locale', $locale);
-                Configure::write('App.language', $language);
-
-                return $locale;
+            if ($this->_locales === ['*']) {
+                return static::processLocale($value);
             }
 
-            foreach (Configure::read('App.locales') as $locale => $name) {
+            foreach ($this->_locales as $locale => $name) {
                 $language = explode('_', $locale)[0];
 
                 if (strcasecmp($locale, $value) === 0 || strcasecmp($value, $language) === 0) {
-                    I18n::setLocale($locale);
-                    Configure::write('App.locale', $locale);
-                    Configure::write('App.language', $language);
-
-                    return $locale;
+                    return static::processLocale($locale);
                 }
             }
         }
 
         return null;
+    }
+
+    /**
+     * Processes a locale, sets the framework's variables and returns it.
+     *
+     * @param string $locale The locale to process.
+     * @return string The processed locale
+     * @since 1.0.1
+     */
+    protected static function processLocale(string $locale)
+    {
+        $l = preg_split('/-|_/', $locale, 2);
+
+        if (isset($l[0])) {
+            $l[0] = strtolower($l[0]);
+        }
+
+        if (isset($l[1])) {
+            $l[1] = strtoupper($l[1]);
+        }
+
+        $locale = implode('_', $l);
+
+        I18n::setLocale($locale);
+        Configure::write('App.locale', $locale);
+        Configure::write('App.language', $l[0]);
+
+        return $locale;
     }
 }

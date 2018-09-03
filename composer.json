@@ -8,6 +8,9 @@
 	],
 	"type" : "cakephp-plugin",
 	"license" : "MIT",
+	"require" : {
+		"ext-intl" : "*"
+	},
 	"require-dev" : {
 		"cakephp/cakephp" : "^3.6"
 	},
@@ -23,7 +26,8 @@
 		}
 	},
 	"homepage" : "https://github.com/smartsolutionsitaly/cakephp-locale-selector-middleware",
-	"authors" : [{
+	"authors" : [
+		{
 			"name" : "Lucio Benini",
 			"email" : "dev@smartsolutions.it",
 			"homepage" : "https://smartsolutions.it",
