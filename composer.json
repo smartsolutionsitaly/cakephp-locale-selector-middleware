@@ -9,7 +9,8 @@
 	"type" : "cakephp-plugin",
 	"license" : "MIT",
 	"require" : {
-		"ext-intl" : "*"
+		"ext-intl" : "*",
+        "smartsolutionsitaly/cakephp-locale-type" : "^1.0"
 	},
 	"require-dev" : {
 		"cakephp/cakephp" : "^3.6"

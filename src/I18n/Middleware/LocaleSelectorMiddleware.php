@@ -25,6 +25,7 @@ use Cake\I18n\I18n;
 use Locale;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SmartSolutionsItaly\CakePHP\Database\Locale;
 
 /**
  * Locale Selector Middleware.
@@ -121,21 +122,12 @@ class LocaleSelectorMiddleware
      */
     protected static function processLocale(string $locale)
     {
-        $l = preg_split('/-|_/', $locale, 2);
-
-        if (isset($l[0])) {
-            $l[0] = strtolower($l[0]);
-        }
-
-        if (isset($l[1])) {
-            $l[1] = strtoupper($l[1]);
-        }
-
-        $locale = implode('_', $l);
-
+        $l = Locale::fromString($locale);
+        $locale = $l->toString();
+        
         I18n::setLocale($locale);
         Configure::write('App.locale', $locale);
-        Configure::write('App.language', $l[0]);
+        Configure::write('App.language', $l->getLanguage());
 
         return $locale;
     }
