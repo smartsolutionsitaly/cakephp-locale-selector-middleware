@@ -22,7 +22,6 @@ namespace SmartSolutionsItaly\CakePHP\I18n\Middleware;
 
 use Cake\Core\Configure;
 use Cake\I18n\I18n;
-use Locale;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SmartSolutionsItaly\CakePHP\Database\Locale;
@@ -72,7 +71,7 @@ class LocaleSelectorMiddleware
         }
 
         if (!$value && !$session->check('Config.language')) {
-            $value = Locale::acceptFromHttp($request->getHeaderLine('Accept-Language'));
+            $value = \Locale::acceptFromHttp($request->getHeaderLine('Accept-Language'));
         }
 
         if ($locale = $this->setLocale($value)) {
@@ -82,6 +81,8 @@ class LocaleSelectorMiddleware
 
         if ($session->read('Config.language') != Configure::read('App.locale')) {
             static::processLocale((string)$session->read('Config.language'));
+        } else {
+            static::processLocale((string)Configure::read('App.locale'));
         }
 
         return $next($request, $response);
