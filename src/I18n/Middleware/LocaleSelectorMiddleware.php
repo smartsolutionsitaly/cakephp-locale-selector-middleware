@@ -125,7 +125,7 @@ class LocaleSelectorMiddleware
     {
         $l = Locale::fromString($locale);
         $locale = $l->toString();
-        
+
         I18n::setLocale($locale);
         Configure::write('App.locale', $locale);
         Configure::write('App.language', $l->getLanguage());
